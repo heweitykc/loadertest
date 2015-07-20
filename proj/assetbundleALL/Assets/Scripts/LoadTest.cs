@@ -3,16 +3,22 @@ using UnityEngine.UI;
 using System.Collections;
 using System.IO;
 
-//
 public class LoadTest : MonoBehaviour {
     public Text lb;
     string filename = "aliceast";
 
 	void Start () {
-        StartCoroutine(LoadFiles());        
+        string filePath = Application.persistentDataPath + "/" + filename;
+        if (File.Exists(filePath))
+        {
+            gameStart();
+        }
+        else {
+            StartCoroutine(LoadFiles(filePath));
+        }        
 	}
 
-    IEnumerator LoadFiles()
+    IEnumerator LoadFiles(string filePath)
     {
         string url = "http://asts.aliapp.com/" + filename;
         print("load " + url);
@@ -21,7 +27,7 @@ public class LoadTest : MonoBehaviour {
         yield return www;
 
         byte[] data = www.bytes;
-        string filePath = Application.persistentDataPath + "/" + filename;
+        
         print(" . " + filePath);
         FileStream stream = new FileStream(filePath, FileMode.OpenOrCreate);
         lb.text += filePath + "\r\t";

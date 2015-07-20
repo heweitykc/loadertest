@@ -1,16 +1,21 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.IO;
 
 //AssetBundle在线更新
 public class ABUpdateManager : MonoBehaviour {
+    public Action<String> msgShow;
+    public Text lb;
+
     string[] abs;
-    int fileCnt;
+    int fileCnt;    
 
     void Start()
     {
-        print("存储地址：" + Application.persistentDataPath);
+        msgShow = displayMsg;
+        msgShow("存储地址：" + Application.persistentDataPath);
         abs = new string[] { "aliceast" };
         fileCnt = abs.Length;
 
@@ -25,7 +30,7 @@ public class ABUpdateManager : MonoBehaviour {
         }
 
         if (fileCnt == 0) {
-            print("不用更新");
+            msgShow("不用更新");
             gameObject.AddComponent<LoadTest>();
         }            
     }
@@ -36,7 +41,7 @@ public class ABUpdateManager : MonoBehaviour {
         string filePath = Application.persistentDataPath + "/" + filename;
         string url = "http://asts.aliapp.com/" + filename;
 
-        print("load " + url);        
+        msgShow("下载：" + url);        
         WWW www = new WWW(url);
         yield return www;
 
@@ -51,7 +56,7 @@ public class ABUpdateManager : MonoBehaviour {
         fileCnt--;
 
         if (fileCnt == 0) {
-            print("更新完成");
+            msgShow("更新完成");
             gameObject.AddComponent<LoadTest>();
         }            
     }
@@ -59,5 +64,10 @@ public class ABUpdateManager : MonoBehaviour {
     bool isContain(string filename)
     {
         return File.Exists(Application.persistentDataPath + "/" + filename);
+    }
+
+    void displayMsg(string msg)
+    {
+        lb.text = msg;
     }
 }

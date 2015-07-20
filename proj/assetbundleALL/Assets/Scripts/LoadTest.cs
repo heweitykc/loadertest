@@ -7,7 +7,7 @@ public class LoadTest : MonoBehaviour {
 
 	void Start () {          
         AssetBundle ast = 
-            AssetBundleManager.getAssetBundle(Application.persistentDataPath + "/aliceast",0);
+            AssetBundleManager.getAssetBundle("aliceast",0);
         GameObject obj = ast.LoadAsset<GameObject>("AliceAST");
         Instantiate(obj);
 	}

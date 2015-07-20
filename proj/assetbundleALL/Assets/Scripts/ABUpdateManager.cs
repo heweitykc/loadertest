@@ -15,7 +15,7 @@ public class ABUpdateManager : MonoBehaviour {
     void Start()
     {
         msgShow = displayMsg;
-        msgShow("存储地址：" + Application.persistentDataPath);
+        print("存储地址：" + Application.persistentDataPath);
         abs = new string[] { "aliceast" };
         fileCnt = abs.Length;
 

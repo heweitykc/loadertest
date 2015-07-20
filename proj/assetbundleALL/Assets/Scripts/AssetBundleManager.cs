@@ -22,6 +22,7 @@ static public class AssetBundleManager {
    };
 
    public static AssetBundle getAssetBundle (string url, int version){
+       url = Application.persistentDataPath + "/"+ url;
        if (!dictAssetBundleRefs.ContainsKey(url)) {
            AssetBundleRef abref = new AssetBundleRef(url, version);
            abref.assetBundle = AssetBundle.CreateFromFile(url);
@@ -29,14 +30,14 @@ static public class AssetBundleManager {
        }
        return dictAssetBundleRefs[url].assetBundle;
    }
-
+    /*
    public static void Unload (string url, int version, bool allObjects){
-       string keyName = url + version.ToString();
+       string keyName = Application.persistentDataPath + "/" + url;
        AssetBundleRef abRef;
        if (dictAssetBundleRefs.TryGetValue(keyName, out abRef)){
            abRef.assetBundle.Unload (allObjects);
            abRef.assetBundle = null;
            dictAssetBundleRefs.Remove(keyName);
        }
-   }
+   }*/
 }

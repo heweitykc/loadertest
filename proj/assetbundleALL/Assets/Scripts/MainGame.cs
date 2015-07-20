@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.IO;
 
-public class LoadTest : MonoBehaviour {    
+public class MainGame : MonoBehaviour {    
 
 	void Start () {          
         AssetBundle ast = 

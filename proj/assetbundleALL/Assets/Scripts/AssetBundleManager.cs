@@ -21,8 +21,8 @@ static public class AssetBundleManager {
        }
    };
 
-   public static AssetBundle getAssetBundle (string url, int version){
-       url = Application.persistentDataPath + "/"+ url;
+   public static AssetBundle getAssetBundle (string name, int version){
+       string url = Application.persistentDataPath + "/" + name;
        if (!dictAssetBundleRefs.ContainsKey(url)) {
            AssetBundleRef abref = new AssetBundleRef(url, version);
            abref.assetBundle = AssetBundle.CreateFromFile(url);

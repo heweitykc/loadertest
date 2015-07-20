@@ -31,7 +31,7 @@ public class ABUpdateManager : MonoBehaviour {
 
         if (fileCnt == 0) {
             msgShow("不用更新");
-            gameObject.AddComponent<LoadTest>();
+            Application.LoadLevel(1);
         }            
     }
 
@@ -57,7 +57,7 @@ public class ABUpdateManager : MonoBehaviour {
 
         if (fileCnt == 0) {
             msgShow("更新完成");
-            gameObject.AddComponent<LoadTest>();
+            Application.LoadLevel(1);
         }            
     }
 

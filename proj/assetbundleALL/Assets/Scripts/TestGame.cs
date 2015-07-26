@@ -6,8 +6,7 @@ using System.Net.Sockets;
 public class TestGame : MonoBehaviour {
     public Transform ball;
     Socket _sock;
-
-	// Use this for initialization
+	
 	void Start () {
         IPHostEntry hostEntry = Dns.GetHostEntry("www.baidu.com");
         foreach (IPAddress ip in hostEntry.AddressList) {
@@ -17,12 +16,10 @@ public class TestGame : MonoBehaviour {
         }
         Application.targetFrameRate = 20;
 	}
-	
-	// Update is called once per frame
+		
 	void Update () {
-        if (_sock.Connected) {
-            print("connected!!!!");
-        }
+        if (!_sock.Connected) return;
+
 	}
 
     void OnGUI()

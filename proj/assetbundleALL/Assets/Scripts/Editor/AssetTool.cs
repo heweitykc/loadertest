@@ -8,8 +8,8 @@ public class AssetTool : EditorWindow {
     [MenuItem("Tools/InstallAPK")]
     static void Install()
     {
-        string[] levels = { "Assets/loading.unity", "Assets/main.unity" };
-        BuildPipeline.BuildPlayer(levels, @"E:\alicetest.apk", BuildTarget.Android, BuildOptions.None);
+        string[] levels = { "Assets/zufang.unity"};
+        BuildPipeline.BuildPlayer(levels, @"E:\alicetest.apk", BuildTarget.Android, BuildOptions.None);        
         Thread newThread = new Thread(new ThreadStart(NewThread));
         newThread.Start();  
     }

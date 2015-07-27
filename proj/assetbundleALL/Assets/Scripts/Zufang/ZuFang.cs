@@ -62,7 +62,7 @@ public class ZuFang : MonoBehaviour {
             StartCoroutine(GetInfo(url));
             yield return new WaitForSeconds(jiage);
         }
-        showmsg("读取完毕");
+        addmsg(",读取完毕");
     }
 
     IEnumerator GetInfo(string url)
@@ -89,5 +89,10 @@ public class ZuFang : MonoBehaviour {
     void showmsg(string msg)
     {
         panel0.GetChild(panel0.childCount - 1).GetComponent<Text>().text = msg;
+    }
+
+    void addmsg(string msg)
+    {
+        panel0.GetChild(panel0.childCount - 1).GetComponent<Text>().text += msg;
     }
 }

@@ -14,37 +14,36 @@ public class ZuFang : MonoBehaviour {
     public Transform panel0;
 
 	void Start () {
-        clear();
+        
 	}
 		
 	void Update () {
 	
 	}
 
+    void startSearch(string desc,string url)
+    {
+        clear();
+        StopAllCoroutines();
+        showmsg(desc);
+        StartCoroutine(DoRequest(url));
+    }
+
     void OnGUI()
     {
         if (GUI.Button(new Rect(0, 20f, 100f, 80f), "水清一村"))
         {
-            clear();
-            StopAllCoroutines();
-            showmsg("开始查找水清一村");
-            StartCoroutine(DoRequest(cun1));
+            startSearch("开始查找水清一村", cun1);
         }
 
         if (GUI.Button(new Rect(0, 100f, 100f, 80f), "水清二村"))
         {
-            clear();
-            StopAllCoroutines();
-            showmsg("开始查找水清二村");
-            StartCoroutine(DoRequest(cun2));
+            startSearch("开始查找水清二村", cun2);
         }
 
         if (GUI.Button(new Rect(0, 180f, 100f, 80f), "水清三村"))
         {
-            clear();
-            StopAllCoroutines();
-            showmsg("开始查找水清三村");
-            StartCoroutine(DoRequest(cun3));
+            startSearch("开始查找水清三村", cun3);
         }
     }
 
@@ -63,6 +62,14 @@ public class ZuFang : MonoBehaviour {
             yield return new WaitForSeconds(jiage);
         }
         addmsg(",读取完毕");
+        yield return new WaitForSeconds(15f);
+        if(yurl == cun1)
+            startSearch("开始查找水清一村", cun1);
+        else if(yurl == cun2)
+            startSearch("开始查找水清二村", cun2);
+        else
+            startSearch("开始查找水清三村", cun3);
+
     }
 
     IEnumerator GetInfo(string url)
@@ -73,7 +80,7 @@ public class ZuFang : MonoBehaviour {
         ItemData data = GetAllLink.getDate(www.text);
         Debug.Log(url + " 发布时间：" + data.dt + "，价格：" + data.price);
         if (data.price <= 3500) {
-            panel0.GetChild(startIndex).GetComponent<Text>().text = (data.dt + " " + data.price + " " + data.tel + "\n" + data.name);
+            panel0.GetChild(startIndex).GetComponent<Text>().text = (data.name + " " + data.price + " " + data.tel + "\n" + data.dt);
             startIndex++;
         }
     }

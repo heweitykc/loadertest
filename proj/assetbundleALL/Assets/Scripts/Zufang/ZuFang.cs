@@ -79,7 +79,8 @@ public class ZuFang : MonoBehaviour {
         Debug.Log("GetInfo = " + www.bytes.Length);
         ItemData data = GetAllLink.getDate(www.text);
         Debug.Log(url + " 发布时间：" + data.dt + "，价格：" + data.price);
-        if (data.price <= 3500) {
+        if (data.price <= maxPrice)
+        {
             panel0.GetChild(startIndex).GetComponent<Text>().text = (data.name + " " + data.price + " " + data.tel + "\n" + data.dt);
             startIndex++;
         }

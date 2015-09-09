@@ -65,8 +65,10 @@ public class interpreter
         currentToken = getNext();
         var left = currentToken;
         eat(TokenType.INTEGER);
+
         var op = currentToken;
         eat(TokenType.PLUS);
+
         var right = currentToken;
         eat(TokenType.INTEGER);
 

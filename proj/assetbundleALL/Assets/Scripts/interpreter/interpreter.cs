@@ -8,10 +8,11 @@ public enum TokenType
 {
     INTEGER,
     PLUS,
+    MINUS,
     EOF
 }
 
-public class Token
+sealed public class Token
 {
     public TokenType type;
     public int value;
@@ -20,6 +21,12 @@ public class Token
     {
         this.type = type;
         this.value = value;
+        Debug.Log(this.ToString());
+    }
+
+    public override string ToString()
+    {
+        return type + "=" + value;
     }
 }
 
@@ -39,39 +46,59 @@ public class interpreter
     public Token getNext()
     {
         if (pos > (text.Length - 1)) {
-            return new Token(TokenType.EOF,' ');
+            return new Token(TokenType.EOF, char.MinValue);
         }
-        char cchar = text[pos];
-        if (cchar == '+')
-        {
-            var token = new Token(TokenType.PLUS, cchar);
+        char cchar = text[pos];        
+        if (cchar == '+'){
             pos += 1;
-            return token;
+            return new Token(TokenType.PLUS, cchar);
+        } else if (cchar == '-') {
+            pos += 1;
+            return new Token(TokenType.MINUS, cchar);
         } else {
-            var token = new Token(TokenType.INTEGER, int.Parse(cchar.ToString()));
-            pos += 1;
-            return token;
+            return new Token(TokenType.INTEGER, getInteger());
         }
+    }
+
+    int getInteger()
+    {
+        string result="";
+        char cchar;        
+        do {
+            cchar = text[pos];
+            if (cchar < 48 || cchar > 57) break;            
+            result += cchar.ToString();
+            pos++;
+            if (pos >= text.Length) break; //超出了
+        } while (true);
+        Debug.Log("ret=" + result);
+        return int.Parse(result);
     }
 
     public void eat(TokenType type)
     {
-        if (currentToken.type == type)
+        if (currentToken.type == type) {
             currentToken = getNext();
+        }            
     }
 
     public int expr()
     {
         currentToken = getNext();
         var left = currentToken;
-        eat(TokenType.INTEGER);
+        eat(left.type);
 
         var op = currentToken;
-        eat(TokenType.PLUS);
+        eat(op.type);
 
         var right = currentToken;
-        eat(TokenType.INTEGER);
+        eat(right.type);
 
-        return left.value + right.value;        
+        if(op.type == TokenType.PLUS)
+            return left.value + right.value;        
+        else if(op.type == TokenType.MINUS)
+            return left.value - right.value;
+
+        return 0;
     }
 }

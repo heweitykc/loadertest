@@ -1,5 +1,8 @@
 #include <stdlib.h>
-#include <assert.h>
+#include <stdio.h>
+
+#define STACK_MAX 256
+#define INITAL_GC_THRESHOLD 8
 
 typedef enum{
 	OBJ_INT,
@@ -7,6 +10,8 @@ typedef enum{
 } ObjectType ;
 
 typedef struct sObject{
+	/* the next object in the list of all objects. */
+	struct sObject* next;
 	unsigned char marked; //mark bit
 	ObjectType type;
 	union 
@@ -21,17 +26,39 @@ typedef struct sObject{
 	};
 } Object;
 
-#define STACK_MAX 256
-
 typedef struct{
+	int numObjects;
+	int maxObjects;
+	
+	Object* firstObject;
 	Object* stack[STACK_MAX];
 	int stackSize;
 } VM;
 
+void gc(VM* vm);
+
+void assert(int condition, const char* message)
+{
+	if(!condition)
+	{
+		printf("%s\n",message);
+		exit(1);
+	}
+}
+
 VM* newVM(){
 	VM* vm = (VM*)malloc(sizeof(VM));
 	vm->stackSize = 0;
+	vm->numObjects = 0;
+	vm->maxObjects = INITAL_GC_THRESHOLD;
 	return vm;
+}
+
+void freeVM(VM *vm)
+{
+	vm->stackSize = 0;
+	gc(vm);
+	free(vm);
 }
 
 void mark(Object* object)
@@ -65,9 +92,30 @@ Object* pop(VM* vm)
 
 Object* newObject(VM* vm, ObjectType type)
 {
+	if(vm->numObjects == vm->maxObjects) gc(vm);
 	Object* object = (Object*)malloc(sizeof(Object));
 	object->type = type;
+	object->marked = 0;
+	
+	object->next = vm->firstObject;
+	vm->firstObject = object;
+	
 	return object;
+}
+
+void sweep(VM* vm)
+{
+	Object** object = &vm->firstObject;
+	while(*object){
+		if(!(*object)->marked){
+			Object* unreached = *object;
+			*object = unreached->next;
+			free(unreached);
+		} else {
+			(*object)->marked = 0;
+			object = &(*object)->next;
+		}
+	}
 }
 
 void pushInt(VM* vm, int intValue)
@@ -85,6 +133,12 @@ Object* pushPair(VM*vm)
 
 	push(vm, object);
 	return object;
+}
+
+void gc(VM* vm)
+{
+	markAll(vm);
+	sweep(vm);
 }
 
 int main()

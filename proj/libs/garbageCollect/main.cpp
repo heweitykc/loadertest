@@ -93,12 +93,14 @@ Object* pop(VM* vm)
 Object* newObject(VM* vm, ObjectType type)
 {
 	if(vm->numObjects == vm->maxObjects) gc(vm);
+	
 	Object* object = (Object*)malloc(sizeof(Object));
 	object->type = type;
-	object->marked = 0;
-	
 	object->next = vm->firstObject;
 	vm->firstObject = object;
+	object->marked = 0;
+
+	vm->numObjects++;
 	
 	return object;
 }
@@ -141,8 +143,54 @@ void gc(VM* vm)
 	sweep(vm);
 }
 
+void test1()
+{
+	printf("Test 1: Objects on stack are perserved.\n");
+	VM* vm = newVM();
+	pushInt(vm,1);
+	pushInt(vm,2);
+	
+	gc(vm);
+	assert(vm->numObjects == 2, "Should have perserved objects.");
+	freeVM(vm);
+}
+
+void test2()
+{
+	printf("Test 2: Unreached objects are collected.\n");
+	VM* vm = newVM();
+	pushInt(vm,1);
+	pushInt(vm,2);
+	pop(vm);
+	pop(vm);
+	
+	gc(vm);
+	assert(vm->numObjects == 0,"Should have collected objects.");
+	freeVM(vm);
+}
+
+void test3()
+{
+	printf("Test 3: Reach nested objects .\n");
+	VM* vm = newVM();
+	pushInt(vm, 1);
+	pushInt(vm, 2);
+	pushPair(vm);
+	pushInt(vm, 3);
+	pushInt(vm, 4);
+	pushPair(vm);
+	pushPair(vm);
+	pushPair(vm);
+	
+	gc(vm);
+	assert(vm->numObjects == 7, "Should have reached objects.");
+	freeVM(vm);
+}
+
 int main()
 {
-
+	test1();
+	//test2();
+	//test3();
 	return 0;
 }

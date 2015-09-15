@@ -10,7 +10,7 @@ namespace solarsystem
 
         void Start()
         {
-
+            //Debug.Log(ClassLibrary1.Class1.dosome()+"...");
         }
 
 

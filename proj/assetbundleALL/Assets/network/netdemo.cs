@@ -38,19 +38,19 @@ public class netdemo : MonoBehaviour {
             {
                 client.Connect("127.0.0.1", 9090);
             }
+            return;
         }
-        else {
-            GUI.Label(new Rect(200, 0, 200, 50), laststr);
-            stream = client.GetStream();
-            sendstr = GUI.TextField(new Rect(200, 100, 200, 50), sendstr);
-            if (string.IsNullOrEmpty(sendstr)) return;
-            if (GUI.Button(new Rect(200, 200, 200, 50), "发送"))
-            {
-                byte[] data = System.Text.Encoding.ASCII.GetBytes(sendstr);
-                stream.Write(data,0,data.Length);                
-            }
-            GUI.Label(new Rect(200, 300, 200, 50), "len=" + client.Available.ToString());
-        }        
+
+        GUI.Label(new Rect(200, 0, 200, 50), laststr);
+        stream = client.GetStream();
+        sendstr = GUI.TextField(new Rect(200, 100, 200, 50), sendstr);
+        if (string.IsNullOrEmpty(sendstr)) return;
+        if (GUI.Button(new Rect(200, 200, 200, 50), "发送"))
+        {
+            byte[] data = System.Text.Encoding.ASCII.GetBytes(sendstr);
+            stream.Write(data,0,data.Length);                
+        }
+        GUI.Label(new Rect(200, 300, 200, 50), "len=" + client.Available.ToString());       
     }
 
     void OnDestroy()

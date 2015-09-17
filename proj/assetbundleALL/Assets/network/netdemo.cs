@@ -5,16 +5,31 @@ using System.Net.Sockets;
 
 public class netdemo : MonoBehaviour {
     TcpClient client;
-	// Use this for initialization
-	void Start () {
-        client = new TcpClient();        
+    NetworkStream stream;
+    byte[] bts = new byte[2048];
+    string laststr="";
+
+    void Start () {
+        client = new TcpClient();
+        
     }
-	
-	// Update is called once per frame
+
+    void clearBts()
+    {
+        for (int i = 0; i < bts.Length; i++) {
+            bts[i] = 0;
+        }
+    }
+		
 	void Update () {
-        Debug.Log(client.Available);
+        if (client.Available > 0) {
+            clearBts();
+            stream.Read(bts, 0, bts.Length);
+            laststr = System.Text.Encoding.ASCII.GetString(bts);
+        }
 	}
 
+    string sendstr="";
     void OnGUI()
     {
         if (!client.Connected)
@@ -25,15 +40,17 @@ public class netdemo : MonoBehaviour {
             }
         }
         else {
+            GUI.Label(new Rect(200, 0, 200, 50), laststr);
+            stream = client.GetStream();
+            sendstr = GUI.TextField(new Rect(200, 100, 200, 50), sendstr);
+            if (string.IsNullOrEmpty(sendstr)) return;
             if (GUI.Button(new Rect(200, 200, 200, 50), "发送"))
             {
-                byte[] data = System.Text.Encoding.ASCII.GetBytes("hello,world!");
-                client.GetStream().Write(data,0,data.Length);
+                byte[] data = System.Text.Encoding.ASCII.GetBytes(sendstr);
+                stream.Write(data,0,data.Length);                
             }
             GUI.Label(new Rect(200, 300, 200, 50), "len=" + client.Available.ToString());
-        }
-
-        
+        }        
     }
 
     void OnDestroy()

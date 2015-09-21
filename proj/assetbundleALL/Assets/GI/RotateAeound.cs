@@ -22,6 +22,7 @@ public class RotateAeound : MonoBehaviour {
 
     void OnGUI()
     {
+        return;
         if (transform.GetComponent<RotateAeound>().global == null) return;
         if (GUI.Button(new Rect(200f, 100f, 200, 55), "增加"))
         {

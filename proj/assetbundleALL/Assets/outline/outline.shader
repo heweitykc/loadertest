@@ -10,9 +10,6 @@
 	}
 	SubShader
 	{
-		
-		LOD 100
-		
 		Pass
 		{
 			Tags{ "RenderType" = "Opaque" "LightMode" = "Always" }
@@ -44,8 +41,7 @@
 			{
 				v2f o;
 				
-				float3 dir = normalize(v.vertex.xyz);
-				/**/
+				float3 dir = normalize(v.vertex.xyz);				
 				float3 dir2 = v.normal;
 				float D = dot(dir,dir2); //反夹角				
 				dir = dir*sign(D);
@@ -64,7 +60,7 @@
 			}
 			ENDCG
 		}
-		/**/	
+		
 		Pass
 		{
 			Tags{ "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
@@ -110,7 +106,7 @@
 			{				
 				fixed4 col = tex2D(_MainTex, i.uv);	
 				float diff = max(0, dot(i.normal, i.lightdir));
-				diff = (diff+1) / 2;					//亮化处理
+				diff = (diff+1) / 2;					//half lambert, 使低亮度的地方加强
 				diff = smoothstep(0,1,diff);			//使颜色平滑在[0, 1]
 				float toon = round(diff*_Steps)/_Steps;	//简化颜色
 				diff = lerp(diff, toon, _ToonEffect);	//调节卡通程度

@@ -3,7 +3,7 @@
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-		_Num("Num", float) = 1
+		_HitAngle("HitAngle", float) = 1
 	}
 	SubShader
 	{
@@ -13,13 +13,10 @@
 		Pass
 		{
 			CGPROGRAM
-// Upgrade NOTE: excluded shader from DX11 and Xbox360; has structs without semantics (struct v2f members angle)
-#pragma exclude_renderers d3d11 xbox360
 			#pragma vertex vert
 			#pragma fragment frag
-			// make fog work
-			#pragma multi_compile_fog
-			
+			#pragma target 3.0
+
 			#include "UnityCG.cginc"
 
 			struct appdata
@@ -37,46 +34,48 @@
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			float _Num;
+			float _HitAngle;
 			
 			v2f vert (appdata v)
 			{
-				v2f o;
-				float tv = 3.1415926 / _Num;
+				v2f o;				
 				float3 first = float3(0, 1, 0);
-				float angle;
-				if (v.vertex.x == 0 && v.vertex.y == 0)
-					angle = 0;
-				else {
-					angle = acos(dot(normalize(v.vertex.xyz), first)/(length(first)*length(v.vertex)));
-				}				
-
-				float ret = sin(_Time.y + angle)*0.01;
-				if ((round(angle / tv) % 2) == 0) {
-					o.color = float4(0, 0, 0, 0);
-					v.vertex.z += ret;
-					//v.vertex.x += sin(ret)*0.01;
-					//v.vertex.y += cos(ret)*0.01;
-				}
-				else {
-					o.color = float4(1, 0, 0, 0);
-					v.vertex.z -= ret;
-					//v.vertex.x -= sin(ret)*0.01;
-					//v.vertex.y -= cos(ret)*0.01;
-				}
-
-				
-				
+				float angle = acos(dot(normalize(first), normalize(v.vertex)));
+				float diff = angle - radians(_HitAngle);
+				v.vertex.xy = v.vertex.xy * (1+sin(_Time.y*3 + diff)*0.1);
+				//v.vertex.xy += (v.vertex.xy*cos(diff));
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.uv = TRANSFORM_TEX(v.uv, _MainTex);						
+				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+				o.color = float4(angle,0,0,0);
 				return o;
 			}
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 col = tex2D(_MainTex, i.uv);	
+				//fixed4 col = tex2D(_MainTex, i.uv);	
 				//col = fixed4(i.color.x, i.color.x, i.color.x,1);
-				return col;
+				//return col;
+
+				float2 uv = i.uv / _ScreenParams.xy;
+				float time = _Time.y*1.25;
+
+				float blob1x = (-0.5 + sin(time*0.8) / 3.0);
+				float blob1y = (-0.5 - cos(time*2.2) / 3.0);
+				float blob1 = sqrt(pow(uv.x + blob1x, 2.0)*2.5 + pow(uv.y + blob1y, 2.0));
+
+				float blob2x = (-0.5 + sin(time*0.7 + 0.3) / 3.0);
+				float blob2y = (-0.5 - cos(time*1.0 - 0.2) / 3.0);
+				float blob2 = sqrt(pow(uv.x + blob2x, 2.0)*2.5 + pow(uv.y + blob2y, 2.0));
+
+				float blob3x = (-0.5 + sin(time*1.5 + 0.6) / 3.0);
+				float blob3y = (-0.5 - cos(time*0.4 - 0.85) / 3.0);
+				float blob3 = sqrt(pow(uv.x + blob3x, 2.0)*2.5 + pow(uv.y + blob3y, 2.0));
+
+				float final = (1.0 - (blob1*blob2*blob3)*16.0 + 1.0) / 2.0;
+
+				float3 gum = float3((final)*1.0 + final*0.8*abs(-final + 0.1), -(final*-1.0*abs(final)), (final*1.0));
+
+				return float4(clamp(-gum.brr / 16.0*2.0, 0.0, 1.0) + clamp(gum.rgb, 0.0, 1.0), 1.0);				
 			}
 			ENDCG
 		}

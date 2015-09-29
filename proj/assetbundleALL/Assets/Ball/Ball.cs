@@ -14,7 +14,7 @@ public class Ball : MonoBehaviour {
         Debug.Log("aake");
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        GetComponent<MeshRenderer>().material.SetFloat("_Num",num);
+        //GetComponent<MeshRenderer>().material.SetFloat("_Num",num);
         Generate(num);        
     }
 
@@ -62,7 +62,7 @@ public class Ball : MonoBehaviour {
 		
 	void Update () {
 
-        Debug.Log(Time.deltaTime);
+        //Debug.Log(Time.deltaTime);
 
     }
 }

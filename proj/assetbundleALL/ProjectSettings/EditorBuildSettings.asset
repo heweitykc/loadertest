@@ -16,7 +16,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/SampleScenes/Scenes/2dCharacter.unity
   - enabled: 0
-    path: Assets/JMO Assets/MatCap Shaders/Demo/MC_Demo.unity
+    path: Assets/matcap/MatCap Shaders/Demo/MC_Demo.unity
   - enabled: 0
     path: Assets/GI/gitest.unity
   - enabled: 0

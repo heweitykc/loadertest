@@ -6,8 +6,12 @@ import(
 	"net"
 )
 
+var scene GameScene;
+
 func Handler(conn net.Conn,messages chan string){
-	fmt.Println("connection is connected from ...",conn.RemoteAddr().String())
+	pname := conn.RemoteAddr().String()
+	fmt.Println("connection is connected from ...",pname)
+	scene.AddObj(GameObject{})
 	buf := make([]byte,1024)
 	for{
 		lenght, err := conn.Read(buf)

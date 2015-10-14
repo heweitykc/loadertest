@@ -11,7 +11,6 @@
 
 		Pass
 		{
-			ZWrite On
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -30,6 +29,12 @@
 				float4 vertex : SV_POSITION;
 			};
 
+			struct fragOut
+			{
+				half4 color : SV_Target;
+				//float depth : SV_Depth;
+			};
+
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			
@@ -37,16 +42,19 @@
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				//o.vertex.z = 0;
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				return o;
 			}
 			
-			fixed4 frag (v2f i) : SV_Target
+			fragOut frag (v2f i)
 			{
-				fixed4 col = tex2D(_MainTex, i.uv);			
-				return col;
+				fragOut outdata;
+				outdata.color = tex2D(_MainTex, i.uv);				
+				return outdata;
 			}
-			ENDCG
+			ENDCG			
 		}
 	}
+	FallBack "Diffuse"
 }

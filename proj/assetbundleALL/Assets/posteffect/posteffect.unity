@@ -180,11 +180,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 319519768}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7aad2c48953566c4ca7713a4b2e5c338, type: 3}
+  m_Script: {fileID: 11500000, guid: ce10da39a3f551745ac1c2a4d8ec420f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Material: {fileID: 2100000, guid: e8b3baf25b1e7dd40877328052de8b86, type: 2}
-  target: {fileID: 0}
+  BlurOffset: .00270000007
+  FocusRange: 120
+  TargetPlayer: {fileID: 932908556}
+  mat: {fileID: 2100000, guid: e8b3baf25b1e7dd40877328052de8b86, type: 2}
+  camera: {fileID: 319519772}
 --- !u!1 &459874610
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,7 +213,7 @@ MeshRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 459874610}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
@@ -265,7 +268,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 459874610}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b23edf2a0ebd6144aac52a0ce5273c79, type: 3}
   m_Name: 
@@ -297,7 +300,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 770306364}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.58000004, y: .0500000007, z: -2.62100005}
+  m_LocalPosition: {x: -1.46000004, y: .0500000007, z: -2.62100005}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1043074775}
@@ -491,7 +494,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 932908556}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.71000004, y: -.140000001, z: .469999999}
+  m_LocalPosition: {x: 1.05999994, y: -.140000001, z: -2.71000004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1043074775}
@@ -597,7 +600,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 6
   m_Type: 1
-  m_Color: {r: .735294104, g: .699030519, b: .600129724, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30

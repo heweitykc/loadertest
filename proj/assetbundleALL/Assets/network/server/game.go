@@ -3,6 +3,7 @@
 import(
 //	"fmt"
 //	"os"
+	"net"
 )
 
 type GameObject struct{
@@ -10,18 +11,28 @@ type GameObject struct{
 	y float32
 	width float32
 	height float32
-	name string
-	children []GameObject
+	name string	
 }
 
 type GamePlayer struct{
 	GameObject
+	netconn net.Conn
 }
 
 type GameScene struct{
 	GameObject	
+	children []*GamePlayer
 }
 
-func (m *GameObject) AddObj(newobj GameObject){
+func (m *GameScene) AddObj(newobj *GamePlayer){
 	m.children = append(m.children, newobj)
+}
+
+func (m *GameScene) GetObj(name string) *GamePlayer{
+	for _, player := range m.children {
+		if player.name == name{
+			return player
+		}			
+	}
+	return nil
 }

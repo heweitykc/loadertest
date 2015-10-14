@@ -4,6 +4,7 @@ import(
 	"fmt"
 	"os"
 	"net"
+	"time"
 )
 
 var scene GameScene;
@@ -11,7 +12,10 @@ var scene GameScene;
 func Handler(conn net.Conn,messages chan string){
 	pname := conn.RemoteAddr().String()
 	fmt.Println("connection is connected from ...",pname)
-	scene.AddObj(GameObject{name:pname})
+	player := new(GamePlayer)
+	player.netconn = conn
+	player.name = pname
+	scene.AddObj(player)
 	buf := make([]byte,1024)
 	for{
 		lenght, err := conn.Read(buf)
@@ -28,18 +32,36 @@ func Handler(conn net.Conn,messages chan string){
 	}
 }
 
-func echoHandler(conns *map[string]net.Conn,messages chan string){
+func clientHandler(conn net.Conn){
+	pname := conn.RemoteAddr().String()
+	fmt.Println("connection is connected from ...",pname)
+	player := new(GamePlayer)
+	player.netconn = conn
+	player.name = pname
+	scene.AddObj(player)
+	buf := make([]byte,1024)
 	for{
-		msg:= <- messages
-		fmt.Println(msg)
-		
-		for key,value := range *conns {
-			//fmt.Println("connection is connected from ...",key)
-			_,err :=value.Write([]byte(msg))
-			if(err != nil){
-				fmt.Println(err.Error())
-				delete(*conns,key)
-			}
+		lenght, err := conn.Read(buf)
+		if(checkError(err,"Connection")==false){
+			conn.Close()
+			break
+		}
+		if lenght > 0{
+			buf[lenght]=0
+		}
+		fmt.Println("Rec[",conn.RemoteAddr().String(),"] Say :" ,string(buf[0:lenght]))
+		reciveStr := conn.RemoteAddr().String()+","+string(buf[0:lenght])
+		conn.Write([]byte(reciveStr))
+	}
+}
+
+func gameLoop(){
+	for{
+		time.Sleep(1*time.Second);
+		fmt.Println("Loop...")
+		for _, player := range scene.children {
+			sendStr := "loop." + player.name
+			player.netconn.Write([]byte(sendStr))
 		}
 	}
 }
@@ -51,9 +73,13 @@ func StartServer(port string){
 		l,err := net.ListenTCP("tcp",tcpAddr)
 		checkError(err,"ListenTCP")
 		conns:=make(map[string]net.Conn)
-		messages := make(chan string,10)
+		//messages := make(chan string,10)
+
 		//启动服务器广播线程
-		go echoHandler(&conns,messages)
+		//go echoHandler(&conns,messages)
+		
+		//启动游戏主循环
+		go gameLoop()		
 		
 		for  {
 			fmt.Println("Listening ...")
@@ -62,7 +88,8 @@ func StartServer(port string){
 			fmt.Println("Accepting ...")
 			conns[conn.RemoteAddr().String()]=conn
 			//启动一个新线程
-			go Handler(conn,messages) 
+			//go Handler(conn,messages) 
+			go clientHandler(conn)
 		}
 }
 
@@ -82,7 +109,21 @@ func checkError(err error,info string) (res bool) {
 	}
 	return true
 }
-
+func echoHandler(conns *map[string]net.Conn,messages chan string){
+	for{
+		msg:= <- messages
+		fmt.Println(msg)
+		
+		for key,value := range *conns {
+			//fmt.Println("connection is connected from ...",key)
+			_,err :=value.Write([]byte(msg))
+			if(err != nil){
+				fmt.Println(err.Error())
+				delete(*conns,key)
+			}
+		}
+	}
+}
 ////////////////////////////////////////////////////////
 //
 //客户端发送线程

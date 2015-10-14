@@ -36,7 +36,7 @@ public class netdemo : MonoBehaviour {
         {
             if (GUI.Button(new Rect(200, 200, 200, 50), "连接"))
             {
-                client.Connect("127.0.0.1", 9090);
+                client.Connect("127.0.0.1", 8008);
             }
             return;
         }

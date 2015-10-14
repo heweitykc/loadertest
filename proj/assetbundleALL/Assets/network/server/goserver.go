@@ -6,14 +6,6 @@ import(
 	"net"
 )
 
-func checkError(err error,info string) (res bool) {
-	if(err != nil){
-		fmt.Println(info+"  " + err.Error())
-		return false
-	}
-	return true
-}
-
 func Handler(conn net.Conn,messages chan string){
 	fmt.Println("connection is connected from ...",conn.RemoteAddr().String())
 	buf := make([]byte,1024)
@@ -70,23 +62,21 @@ func StartServer(port string){
 		}
 }
 
-
 //	启动服务器端：  Chat server [port]	    eg: Chat server 9090
 func main(){
-	if len(os.Args)!=3  {	
+	if len(os.Args)!=2  {	
 		fmt.Println("Wrong pare")
 		os.Exit(0)
 	}
-	
-	if os.Args[1]=="server" && len(os.Args)==3 {
-		
-		StartServer(os.Args[2])
+	StartServer(os.Args[1])
+}
+
+func checkError(err error,info string) (res bool) {
+	if(err != nil){
+		fmt.Println(info+"  " + err.Error())
+		return false
 	}
-	
-	if os.Args[1]=="client" && len(os.Args)==3 {
-		
-		StartClient(os.Args[2])
-	}
+	return true
 }
 
 ////////////////////////////////////////////////////////

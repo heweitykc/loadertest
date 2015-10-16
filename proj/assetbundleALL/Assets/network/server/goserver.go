@@ -8,30 +8,6 @@ import(
 )
 
 var scene GameScene;
-
-func Handler(conn net.Conn,messages chan string){
-	pname := conn.RemoteAddr().String()
-	fmt.Println("connection is connected from ...",pname)
-	player := new(GamePlayer)
-	player.netconn = conn
-	player.name = pname
-	scene.AddObj(player)
-	buf := make([]byte,1024)
-	for{
-		lenght, err := conn.Read(buf)
-		if(checkError(err,"Connection")==false){
-			conn.Close()
-			break
-		}
-		if lenght > 0{
-			buf[lenght]=0
-		}
-		fmt.Println("Rec[",conn.RemoteAddr().String(),"] Say :" ,string(buf[0:lenght]))
-		reciveStr := conn.RemoteAddr().String()+","+string(buf[0:lenght])
-		messages <- reciveStr
-	}
-}
-
 func clientHandler(conn net.Conn){
 	pname := conn.RemoteAddr().String()
 	fmt.Println("connection is connected from ...",pname)
@@ -41,7 +17,7 @@ func clientHandler(conn net.Conn){
 	scene.AddObj(player)
 	buf := make([]byte,1024)
 	for{
-		lenght, err := conn.Read(buf)
+		lenght, err := conn.Read(buf)		
 		if(checkError(err,"Connection")==false){
 			conn.Close()
 			break
@@ -72,11 +48,7 @@ func StartServer(port string){
 		checkError(err,"ResolveTCPAddr")
 		l,err := net.ListenTCP("tcp",tcpAddr)
 		checkError(err,"ListenTCP")
-		conns:=make(map[string]net.Conn)
 		//messages := make(chan string,10)
-
-		//启动服务器广播线程
-		//go echoHandler(&conns,messages)
 		
 		//启动游戏主循环
 		go gameLoop()		
@@ -85,10 +57,7 @@ func StartServer(port string){
 			fmt.Println("Listening ...")
 			conn,err := l.Accept()
 			checkError(err,"Accept")
-			fmt.Println("Accepting ...")
-			conns[conn.RemoteAddr().String()]=conn
-			//启动一个新线程
-			//go Handler(conn,messages) 
+			fmt.Println("Accepting ...")			
 			go clientHandler(conn)
 		}
 }
@@ -109,6 +78,30 @@ func checkError(err error,info string) (res bool) {
 	}
 	return true
 }
+
+func Handler(conn net.Conn,messages chan string){
+	pname := conn.RemoteAddr().String()
+	fmt.Println("connection is connected from ...",pname)
+	player := new(GamePlayer)
+	player.netconn = conn
+	player.name = pname
+	scene.AddObj(player)
+	buf := make([]byte,1024)
+	for{
+		lenght, err := conn.Read(buf)
+		if(checkError(err,"Connection")==false){
+			conn.Close()
+			break
+		}
+		if lenght > 0{
+			buf[lenght]=0
+		}
+		fmt.Println("Rec[",conn.RemoteAddr().String(),"] Say :" ,string(buf[0:lenght]))
+		reciveStr := conn.RemoteAddr().String()+","+string(buf[0:lenght])
+		messages <- reciveStr
+	}
+}
+
 func echoHandler(conns *map[string]net.Conn,messages chan string){
 	for{
 		msg:= <- messages

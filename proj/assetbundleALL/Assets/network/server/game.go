@@ -36,3 +36,8 @@ func (m *GameScene) GetObj(name string) *GamePlayer{
 	}
 	return nil
 }
+
+func (m *GameScene) Shoot(name string){
+	//player := m.GetObj(name)
+	
+}

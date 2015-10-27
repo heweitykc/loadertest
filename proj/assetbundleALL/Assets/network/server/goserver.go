@@ -27,17 +27,17 @@ func clientHandler(conn net.Conn){
 			scene.RemoveObj(&pname)
 			break
 		}
-		if length > 0{
-			//buf[length]=0
+		if length <= 0{	//无数据
+			continue
 		}
-		
+		//复制数据
 		for i := 0; i < length; i++ {
 			buffer.WriteByte(buf[i])
 		}		
 		fmt.Println("Rec[",conn.RemoteAddr().String(),"] Say :" ,string(buf[0:length]))		
 		allcontent := buffer.Bytes()
-		fmt.Println(" :" ,string(allcontent[0:len(allcontent)]))		
-		//conn.Write(allcontent[0:len(allcontent)])
+		fmt.Println(" :" ,string(allcontent))		
+		conn.Write(allcontent)
 	}
 }
 

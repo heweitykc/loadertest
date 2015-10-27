@@ -1,7 +1,7 @@
 ﻿package main
 
 import(
-//	"fmt"
+	"fmt"
 //	"os"
 	"net"
 )
@@ -21,23 +21,30 @@ type GamePlayer struct{
 
 type GameScene struct{
 	GameObject	
-	children []*GamePlayer
+	children map[string]*GamePlayer
+}
+
+func (m *GameScene) Init(){
+	m.children = make(map[string]*GamePlayer)
 }
 
 func (m *GameScene) AddObj(newobj *GamePlayer){
-	m.children = append(m.children, newobj)
+	m.children[newobj.name] = newobj
+}
+
+func (m *GameScene) RemoveObj(name *string){
+	delete(m.children, *name)
 }
 
 func (m *GameScene) GetObj(name string) *GamePlayer{
-	for _, player := range m.children {
-		if player.name == name{
-			return player
-		}			
-	}
-	return nil
+	return m.children[name]
 }
 
 func (m *GameScene) Shoot(name string){
-	//player := m.GetObj(name)
-	
+	player := m.children[name]
+	player.Shoot()
+}
+
+func (m *GamePlayer) Shoot(){
+	fmt.Println("i shoot.")
 }

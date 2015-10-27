@@ -5,6 +5,8 @@ import(
 	"os"
 	"net"
 	"time"
+	//"io"
+	"bytes"
 )
 
 var scene GameScene;
@@ -16,25 +18,33 @@ func clientHandler(conn net.Conn){
 	player.name = pname
 	scene.AddObj(player)
 	buf := make([]byte,1024)
+	var buffer bytes.Buffer
 	for{
-		lenght, err := conn.Read(buf)		
+		length, err := conn.Read(buf)		
 		if(checkError(err,"Connection")==false){
 			conn.Close()
+			fmt.Println(pname," closed")
+			scene.RemoveObj(&pname)
 			break
 		}
-		if lenght > 0{
-			buf[lenght]=0
+		if length > 0{
+			//buf[length]=0
 		}
-		fmt.Println("Rec[",conn.RemoteAddr().String(),"] Say :" ,string(buf[0:lenght]))
-		reciveStr := conn.RemoteAddr().String()+","+string(buf[0:lenght])
-		conn.Write([]byte(reciveStr))
+		
+		for i := 0; i < length; i++ {
+			buffer.WriteByte(buf[i])
+		}		
+		fmt.Println("Rec[",conn.RemoteAddr().String(),"] Say :" ,string(buf[0:length]))		
+		allcontent := buffer.Bytes()
+		fmt.Println(" :" ,string(allcontent[0:len(allcontent)]))		
+		//conn.Write(allcontent[0:len(allcontent)])
 	}
 }
 
 func gameLoop(){
 	for{
-		time.Sleep(1*time.Second);
-		fmt.Println("Loop...")
+		time.Sleep(5*time.Second);
+		fmt.Println("current:" , len(scene.children))
 		for _, player := range scene.children {
 			sendStr := "loop." + player.name
 			player.netconn.Write([]byte(sendStr))
@@ -49,9 +59,9 @@ func StartServer(port string){
 		l,err := net.ListenTCP("tcp",tcpAddr)
 		checkError(err,"ListenTCP")
 		//messages := make(chan string,10)
-		
+		scene.Init()
 		//启动游戏主循环
-		go gameLoop()		
+		//go gameLoop()		
 		
 		for  {
 			fmt.Println("Listening ...")
@@ -62,7 +72,7 @@ func StartServer(port string){
 		}
 }
 
-//	启动服务器端：  Chat server [port]	    eg: Chat server 9090
+//	启动服务器端：  Chat [port]	    eg: Chat 9090
 func main(){
 	if len(os.Args)!=2  {	
 		fmt.Println("Wrong pare")

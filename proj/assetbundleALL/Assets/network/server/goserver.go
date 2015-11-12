@@ -36,7 +36,6 @@ func clientHandler(conn net.Conn){
 		}		
 		fmt.Println("Rec[",conn.RemoteAddr().String(),"] Say :" ,string(buf[0:length]))		
 		allcontent := buffer.Bytes()
-		fmt.Println(" :" ,string(allcontent))		
 		conn.Write(allcontent)
 	}
 }

@@ -404,6 +404,10 @@ Material:
         first:
           name: _Num
         second: .0500000007
+      data:
+        first:
+          name: _HitAngle
+        second: 1
     m_Colors:
       data:
         first:

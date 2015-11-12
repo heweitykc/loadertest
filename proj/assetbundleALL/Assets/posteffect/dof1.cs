@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Net.Sockets;
 
 public class dof1 : MonoBehaviour {
     public float BlurOffset = 0.0027f;
@@ -9,9 +10,19 @@ public class dof1 : MonoBehaviour {
 
     public Camera camera;
 
+    public TcpClient client;
+
     void Start()
-    {        
+    {         
         camera.depthTextureMode = DepthTextureMode.Depth;
+        client = new TcpClient();        
+    }
+
+    IEnumerator load()
+    {
+        WWW www = new WWW("www.baidu.com");
+        yield return null;
+        Debug.Log(www.text);
     }
 
     void OnRenderImage(RenderTexture src, RenderTexture dst)

@@ -53,7 +53,7 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed4 col = tex2D(_MainTex, i.uv);	
-				col = fixed4(i.color.x, i.color.x, i.color.x,1);
+				//col = fixed4(i.color.x, i.color.x, i.color.x,1);
 				return col;			
 			}
 			ENDCG
